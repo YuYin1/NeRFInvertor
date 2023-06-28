@@ -1,33 +1,8 @@
 ###############################
 ##        iNVERSION          ##
 #                cuda exp_type subject data num_iter
-## sh inversion.sh 3 'freq_phase' 'all' 'ffhq' 2000
 ## sh inversion.sh 0 'freq_phase' '04999' 'ffhq' 2000
-## sh inversion.sh 1 'z' 'all' 'ffhq' 1000
 ## sh inversion.sh 1 'z' '04999 04964' 'ffhq' 1000
-
-## sh inversion.sh 0 'freq_phase' 'all' 'ffhq' 2000
-## sh inversion.sh 1 'z' 'all' 'ffhq' 1000
-
-
-## sh inversion.sh 1 'freq_phase' 'all' 'cat' 2000
-## sh inversion.sh 0 'z' 'all' 'cat' 1000
-
-## sh inversion.sh 0 'z' 'all' 'carla' 1000
-#  ffhq: '04999 04964 04934 04832 04829 04813 04811 04763 04729 04723 04721 04685 04670 04620 04619'
-#        '04604 04585 04567 04550 04548 04408 04355 04352 04339 04213 04181 04095 04066 04059 03973'
-
-#sh inversion.sh 0 'freq_phase' '04999 04964 04934 04832 04829 04813 04811 04763 04729 04723 04721 04685 04670 04620 04619 04604 04585 04567 04550 04548 04408 04355 04352 04339 04213 04181 04095 04066 04059 03973' 'ffhq' 1000
-#sh inversion.sh 1 'freq_phase' 'all' 'ffhq' 1000
-#sh inversion.sh 2 'z' '04999 04964 04934 04832 04829 04813 04811 04763 04729 04723 04721 04685 04670 04620 04619 04604 04585 04567 04550 04548 04408 04355 04352 04339 04213 04181 04095 04066 04059 03973' 'ffhq' 1000
-#sh inversion.sh 3 'z' 'all' 'ffhq' 1000
-
-#sh inversion.sh 1 'freq_phase' 'all' 'cat' 1000
-#sh inversion.sh 3 'z' 'all' 'cat' 1000
-
-#sh inversion.sh 1 'freq_phase' 'all' 'carla' 2000
-#sh inversion.sh 3 'z' 'all' 'carla' 1000
-
 ###############################
 #max_iter=2000
 #max_iter=1000
