@@ -70,45 +70,6 @@ def transform_matrix_to_camera_pos(c2w,flip=False):
     P = torch.tensor([phi,theta],dtype=torch.float32)
     return P
 
-
-class CATS(Dataset):
-    def __init__(self, img_size, **kwargs):
-        super().__init__()
-        self.img_size = img_size
-        self.real_pose = False
-        if 'real_pose' in kwargs and kwargs['real_pose'] == True:
-            self.real_pose = True
-
-        for i in range(10):
-            try:
-                self.data = glob.glob(os.path.join('datasets/cats','*.png'))
-                assert len(self.data) > 0, "Can't find data; make sure you specify the path to your dataset"
-                if self.real_pose:
-                    self.pose = [os.path.join('datasets/cats/poses',f.split('/')[-1].replace('.png','_pose.npy')) for f in self.data]
-                break
-            except:
-                print('failed to load dataset, try %02d times'%i)
-                time.sleep(0.5)
-
-        self.transform = transforms.Compose(
-                    [transforms.Resize((img_size, img_size), interpolation=1), transforms.ToTensor(), transforms.Normalize([0.5], [0.5])])
-
-    def __len__(self):
-        return len(self.data)
-
-    def __getitem__(self, index):
-        X = PIL.Image.open(self.data[index])
-        X = self.transform(X)
-        flip = (torch.rand(1) < 0.5)
-        if flip:
-            X = F.hflip(X)
-        if self.real_pose:
-            P = read_pose_npy(self.pose[index], flip=flip)
-        else:
-            P = 0
-
-        return X, P
-
 class CATS_finetune(Dataset):
     def __init__(self, opt, img_size, **kwargs):
         super().__init__()
@@ -179,84 +140,8 @@ class CATS_finetune(Dataset):
 
         return X, P, Z
 
-class CARLA(Dataset):
-    def __init__(self, img_size, **kwargs):
-        super().__init__()
-        self.img_size = img_size
-        self.real_pose = False
-        if 'real_pose' in kwargs and kwargs['real_pose'] == True:
-            self.real_pose = True
 
-        for i in range(10):
-            try:
-                self.data = glob.glob(os.path.join('datasets/carla','*.png'))
-                assert len(self.data) > 0, "Can't find data; make sure you specify the path to your dataset"
-                if self.real_pose:
-                    self.pose = [os.path.join('datasets/carla/poses',f.split('/')[-1].replace('.png','_extrinsics.npy')) for f in self.data]
-                break
-            except:
-                print('failed to load dataset, try %02d times'%i)
-                time.sleep(0.5)
-
-        self.transform = transforms.Compose(
-                    [transforms.Resize((img_size, img_size), interpolation=1), transforms.ToTensor(), transforms.Normalize([0.5], [0.5])])
-
-    def __len__(self):
-        return len(self.data)
-
-    def __getitem__(self, index):
-        X = PIL.Image.open(self.data[index])
-        X = self.transform(X)
-        flip = (torch.rand(1) < 0.5)
-        if flip:
-            X = F.hflip(X)
-        if self.real_pose:
-            P = transform_matrix_to_camera_pos(np.load(self.pose[index]), flip=flip)
-        else:
-            P = 0
-
-        return X, P
-
-
-class FFHQ(Dataset):
-    def __init__(self, img_size, **kwargs):
-        super().__init__()
-        self.img_size = img_size
-        self.real_pose = False
-        if 'real_pose' in kwargs and kwargs['real_pose'] == True:
-            self.real_pose = True
-
-        for i in range(10):
-            try:
-                self.data = glob.glob(os.path.join('datasets/ffhq','*.png'))
-                assert len(self.data) > 0, "Can't find data; make sure you specify the path to your dataset"
-                if self.real_pose:
-                    self.pose = [os.path.join('datasets/ffhq/poses',f.split('/')[-1].replace('png','mat')) for f in self.data]
-                break
-            except:
-                print('failed to load dataset, try %02d times'%i)
-                time.sleep(0.5)
-        self.transform = transforms.Compose(
-                    [transforms.Resize((img_size, img_size), interpolation=1), transforms.ToTensor(), transforms.Normalize([0.5], [0.5])])
-
-    def __len__(self):
-        return len(self.data)
-
-    def __getitem__(self, index):
-        X = PIL.Image.open(self.data[index])
-        X = self.transform(X)
-        flip = (torch.rand(1) < 0.5)
-        if flip:
-            X = F.hflip(X)
-        if self.real_pose:
-            P = read_pose(self.pose[index],flip=flip)
-        else:
-            P = 0
-
-        return X, P
-
-
-class FFHQ_finetune(Dataset):
+class FACES_finetune(Dataset):
     def __init__(self, opt, img_size, **kwargs):
         super().__init__()
         imgname = opt.target_name
@@ -268,13 +153,14 @@ class FFHQ_finetune(Dataset):
 
         for i in range(10):
             try:
-                self.data = glob.glob(os.path.join(opt.data_img_dir, f'{imgname}.png'))
+                self.data = glob.glob(os.path.join(opt.data_img_dir, f'{imgname}'))
                 assert len(self.data) > 0, "Can't find data; make sure you specify the path to your dataset"
                 if self.real_pose:
                     self.pose = [os.path.join(opt.data_pose_dir, f.split('/')[-1].replace('png','mat')) for f in self.data]
                 break
             except:
                 print('failed to load dataset, try %02d times'%i)
+                print(os.path.join(opt.data_img_dir, f'{imgname}'))
                 time.sleep(0.5)
         self.transform = transforms.Compose(
                     [transforms.Resize((img_size, img_size), interpolation=1), transforms.ToTensor(), transforms.Normalize([0.5], [0.5])])
@@ -282,16 +168,15 @@ class FFHQ_finetune(Dataset):
         self.opt_pose = False
         if opt.data_emd_dir.find('pose') > 0:
             self.opt_pose = True
-            self.pose = [os.path.join(opt.data_emd_dir, f'{imgname}/{opt.target_inv_epoch}_pose_.txt')]
+            self.pose = [os.path.join(opt.data_emd_dir, f'{imgname.split(".")[0]}/{opt.target_inv_epoch}_pose_.txt')]
 
-        self.emd = [os.path.join(opt.data_emd_dir, f'{imgname}/{opt.target_inv_epoch}_.txt')]
-        self.green_bg = opt.green_bg
-        self.load_mat = opt.load_mat
-        if self.green_bg or self.load_mat:
+        self.emd = [os.path.join(opt.data_emd_dir, f'{imgname.split(".")[0]}/{opt.target_inv_epoch}_.txt')]
+        self.load_mask = opt.load_mask
+        if self.load_mask:
             self.mat = []
             for img in self.data:
                 split = img.split("/")
-                self.mat.append(img.replace(split[-1], f"mat256/{split[-1]}"))
+                self.mat.append(img.replace(split[-1], f"mask256/{split[-1]}"))
         self.transform_mat = transforms.Compose([transforms.Resize((img_size, img_size), interpolation=1), transforms.ToTensor()])
 
     def __len__(self):
@@ -299,17 +184,6 @@ class FFHQ_finetune(Dataset):
 
     def __getitem__(self, index):
         X = PIL.Image.open(self.data[index])
-        if self.green_bg:
-            mat = PIL.Image.open(self.mat[index])
-            # mat.save("mat.png")
-            mat_np = np.expand_dims(np.array(mat), axis=2)
-            mat_np = mat_np / 255
-            X_np = np.array(X)
-
-            # green: [0, 177, 64]
-            X_np = (X_np * mat_np + [0, 177, 64] * (1-mat_np)).astype('uint8')
-            X = PIL.Image.fromarray(X_np)
-            # X.save("rgb_mat.png")
 
         X = self.transform(X)
         if self.opt_pose:
@@ -318,7 +192,7 @@ class FFHQ_finetune(Dataset):
             P = read_pose(self.pose[index]) # ori pose
 
         Z = read_latents_txt(self.emd[index])
-        if self.load_mat:
+        if self.load_mask:
             mat = PIL.Image.open(self.mat[index])
             mat = self.transform_mat(mat)
 
@@ -398,7 +272,7 @@ def get_dataset_distributed_(_dataset, world_size, rank, batch_size, **kwargs):
 if __name__ == '__main__':
     import imageio
     from tqdm import tqdm
-    dataset = FFHQ(64, **{'real_pose': True})
+    dataset = FACES_finetune(64, **{'real_pose': True})
     dataset, _ = get_dataset_(dataset)
     for i, (image, pose) in tqdm(enumerate(dataset)):
         print(pose * 180 / np.pi)

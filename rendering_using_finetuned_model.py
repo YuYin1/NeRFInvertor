@@ -1,7 +1,4 @@
-# from asyncio import FIRST_COMPLETED
-# from logging import shutdown
 import os
-
 import ipdb
 from matplotlib.pyplot import prism
 import numpy as np
@@ -10,11 +7,8 @@ from collections import deque
 
 from yaml import parse
 import torch
-# import torch.distributed as dist
-# import torch.multiprocessing as mp
 import torch.nn as nn
 import torch.nn.functional as F
-# from torch.nn.parallel import DistributedDataParallel as DDP
 from torchvision.utils import save_image
 import torchvision.transforms as transforms
 import importlib
@@ -25,30 +19,15 @@ import copy
 from generators import generators
 import configs
 
-# from generators import generators_neutex as generators
-# from discriminators import discriminators
-# from siren import siren
-# import fid_evaluation
-# import datasets
-# import curriculums
 from tqdm import tqdm
-# from datetime import datetime
-# import copy, plyfile
 from torch_ema import ExponentialMovingAverage
-# import pytorch3d
-# from loss import *
 from torch.utils.tensorboard import SummaryWriter
-# from torch_ema import ExponentialMovingAverage
-#os.environ["CUDA_VISIBLE_DEVICES"] = '1'
+
 import argparse
-#os.environ["CUDA_VISIBLE_DEVICES"] = '1'
-# import FaceRecon_Pytorch.util.util as util
-# device = torch.device('cuda') #if torch.cuda.is_available() else 'cpu')
-# from loss import * 
 from PIL import Image 
 import skvideo
-# skvideo.setFFmpegPath("/usr/bin/")
-import skvideo.io
+skvideo.setFFmpegPath("/usr/bin/")
+# import skvideo.io
 from skvideo.io import FFmpegWriter
 import PIL.ImageDraw as ImageDraw
 
@@ -71,14 +50,6 @@ def load_models(opt, config, device):
     generator.load_state_dict(torch.load(os.path.join(opt.generator_file), map_location='cpu'),strict=False)
     generator = generator.to('cuda')
     generator.eval()
-
-
-    # ema = ExponentialMovingAverage(generator.parameters(), decay=0.999)
-    # ema_file = torch.load(os.path.join(opt.generator_file.replace('generator', 'ema2')), map_location='cpu')
-    # ema_file['collected_params'] = ema_file['shadow_params']
-    # ema.load_state_dict(ema_file)
-    # parameters = [p for p in generator.parameters() if p.requires_grad]
-    # ema.copy_to(parameters)
 
     try:
         ema = torch.load(os.path.join(opt.generator_file.replace('generator', 'ema')), map_location='cpu')
@@ -114,42 +85,6 @@ def read_pose_npy(name,flip=False):
     P = torch.tensor([P_x,P_y],dtype=torch.float32)
 
     return P
-
-
-def transform_matrix_to_camera_pos(c2w,flip=False):
-    """
-    Get camera position with transform matrix
-
-    :param c2w: camera to world transform matrix
-    :return: camera position on spherical coord
-    """
-
-    c2w[[0,1,2]] = c2w[[1,2,0]]
-    pos = c2w[:, -1].squeeze()
-    radius = float(np.linalg.norm(pos))
-    theta = float(np.arctan2(-pos[0], pos[2]))
-    phi = float(np.arctan(-pos[1] / np.linalg.norm(pos[::2])))
-    theta = theta + np.pi * 0.5
-    phi = phi + np.pi * 0.5
-    if flip:
-        theta = -theta + math.pi
-    P = torch.tensor([phi,theta],dtype=torch.float32)
-    return P
-
-def read_latents_txt_fq(name, device="cpu"):
-    # load the latent codes for id, expression and so on.
-    '''
-        the data structure of freq_phase inversion
-        latents: (5376,)
-        freq: input freq for PiGAN, 2304
-        phase: input phase for PiGAN, 2304
-    '''
-    latents = np.loadtxt(name)
-    latents = torch.from_numpy(latents).float().unsqueeze(0).to(device)
-    freq = latents[:, :2304]
-    phase = latents[:, 2304:2304+2304]
-
-    return freq, phase
 
 def read_latents_txt_z(name, device="cpu"):
     '''
@@ -291,49 +226,27 @@ def sample_generator(generator, z, max_batch=100000, voxel_resolution=256, voxel
     
     return sigmas, voxel_origin, voxel_size
 
-def sample_generator_with_freq_phase(generator, freq, phase, max_batch=100000, voxel_resolution=256, voxel_origin=[0,0,0], cube_length=2.0):
-    head = 0
-    samples, voxel_origin, voxel_size = create_samples(voxel_resolution, voxel_origin, cube_length)
-    samples = samples.to(freq.device)
-    sigmas = torch.zeros((samples.shape[0], samples.shape[1], 1), device=freq.device)
-    
-    transformed_ray_directions_expanded = torch.zeros((samples.shape[0], max_batch, 3), device=freq.device)
-    transformed_ray_directions_expanded[..., -1] = -1
-    
-    # generator.get_avg_w()
-    with torch.no_grad():
-        while head < samples.shape[1]:
-            coarse_output = generator._volume_with_frequencies_phase_shifts(freq, phase)(samples[:, head:head+max_batch], transformed_ray_directions_expanded[:, :samples.shape[1]-head])
-
-            sigmas[:, head:head+max_batch] = coarse_output[:, :, -1:]
-            head += max_batch
-    
-    sigmas = sigmas.reshape((voxel_resolution, voxel_resolution, voxel_resolution)).cpu().numpy()
-    
-    return sigmas, voxel_origin, voxel_size
-
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--generator_file', type=str, default='../pretrained_models/FFHQ_default/generator.pth')
-    parser.add_argument('--output_dir', type=str, default='../exp_gram/inversion_ffhq/')
-    parser.add_argument('--img_dir', type=str, default='../../Dataset/NeRFGAN/image256_align_new_mirror_wo_t')
-    parser.add_argument('--mat_dir', type=str, default='../../Dataset/NeRFGAN/ffhq_pose_align_new_mirror')
-    parser.add_argument('--config', type=str, default='FFHQ_default')
-    parser.add_argument('--target_emb_dir', type=str, default='../exp_gram/inversion/')
+    parser.add_argument('--generator_file', type=str, default='experiments/gram/finetuned_model/subject_name/generator.pth')
     parser.add_argument('--target_name', type=str, default=None)
+    parser.add_argument('--output_dir', type=str, default='experiments/gram/rendering_results/')
+    parser.add_argument('--data_img_dir', type=str, default='samples/faces/')
+    parser.add_argument('--data_pose_dir', type=str, default='samples/faces/camerapose/')
+    parser.add_argument('--data_emd_dir', type=str, default='experiments/gram/inversion')
+    parser.add_argument('--config', type=str, default='FACES_default')
     parser.add_argument('--max_batch_size', type=int, default=1200000)
     parser.add_argument('--lock_view_dependence', action='store_true')
     parser.add_argument('--image_size', type=int, default=256)
     parser.add_argument('--name', type=str, default='render', help='name of the experiment. It decides where to store samples and models')
     parser.add_argument('--gpu_ids', type=str, default='0', help='gpu ids: e.g. 0  0,1,2, 0,2. use -1 for CPU')
-    parser.add_argument('--psi', type=float, default=1)
+    parser.add_argument('--psi', type=float, default=0.7)
 
     parser.add_argument('--seed', type=int, default=0)
     parser.add_argument('--trajectory', type=str, default='front', help='still, front, orbit')
     parser.add_argument('--z_trajectory', type=str, default='still', help='still, gradual, interpolate')
     parser.add_argument('--freq_trajectory', type=str, default='still', help='still, gradual, interpolate')
     parser.add_argument('--phase_trajectory', type=str, default='still', help='still, gradual, interpolate')
-    parser.add_argument('--opt_param', type=str, default="freq_phase", help="select what parameters to optimize, e.g., freq_phase, freq2_phase2 or id_exp_noise")
     parser.add_argument('--suffix', default='', type=str, help='customized suffix: opt.name = opt.name + suffix: e.g., {model}_{netG}_size{load_size}')
     parser.add_argument('--gen_video', action='store_true', help='whether generate video')
     parser.add_argument('--cube_size', type=float, default=0.3)
@@ -351,67 +264,38 @@ if __name__ == '__main__':
     generator = load_models(opt, config, device)
 
     ## load data
-    if opt.config.find('FFHQ') >= 0:
-        generator.renderer.lock_view_dependence = True
-        img_size = config['global']['img_size']
-    elif opt.config.find('CelebAHQ') >= 0:
-        generator.renderer.lock_view_dependence = True
-        img_size = config['global']['img_size']
-    elif opt.config.find('CATS') >= 0:   # CATS
-        generator.renderer.lock_view_dependence = True
-        img_size = config['global']['img_size']
-    elif opt.config.find('CARLA') >= 0:   # CARLA
-        generator.renderer.lock_view_dependence = False
-        img_size = config['global']['img_size']
+    generator.renderer.lock_view_dependence = True
+    img_size = config['global']['img_size']
+    target_emb_name = f"{opt.target_name}/00999_.txt"
+    optimized_latents = sorted(glob.glob(os.path.join(opt.data_emd_dir, target_emb_name)))
 
-    if opt.target_name == "all":
-        if opt.target_emb_dir.find("_Z") >= 0:
-            target_emb_name = "*/00999_.txt"
-        else:
-            target_emb_name = "*/01999_.txt"
-    else:
-        if opt.target_emb_dir.find("_Z") >= 0:
-            target_emb_name = f"{opt.target_name}/00999_.txt"
-        else:
-            target_emb_name = f"{opt.target_name}/01999_.txt"
-        # target_emb_name = f"{opt.target_name}/01999_.txt" #"CoreView_142_cam2_29985799"
-        # target_emb_name = f"{opt.target_name}/01999_avgFreqPhase.txt"
-        
-
-    invert_file_targets = sorted(glob.glob(os.path.join(opt.target_emb_dir, target_emb_name)))
-    for invert_file_target in invert_file_targets:
-        print(f"Rendering for {invert_file_target}")
-        extract_shape = False
-        ## load pose, inverted latent code
-        target_name = invert_file_target.split("/")[-2]
-
-        if opt.config.find('FFHQ') >= 0 or opt.config.find('CelebAHQ') >= 0:
-            mat_target = os.path.join(opt.mat_dir, f"{target_name}.mat")
-            pose = read_pose_ori(mat_target, flip=False)
-        elif opt.config.find('CATS') >= 0:   # CATS
-            mat_target = os.path.join(opt.mat_dir, f"{target_name}_pose.npy")
-            pose = read_pose_npy(mat_target, flip=False)
-        elif opt.config.find('CARLA') >= 0:   # CARLA
-            mat_target = os.path.join(opt.mat_dir, f"{target_name}_extrinsics.npy")
-            pose = transform_matrix_to_camera_pos(np.load(mat_target))
-        else:
+    for optimized_latent in optimized_latents:
+        print(f"Rendering for {optimized_latent}")
+        if not os.path.exists(optimized_latent):
+            print(f"The file '{optimized_latent}' does not exist.")
             raise
 
-        # import ipdb;ipdb.set_trace()
+        extract_shape = False
+        ## load pose, inverted latent code
+        target_name = optimized_latent.split("/")[-2]
+
+        if opt.config.find('FACES') >= 0:
+            mat_target = os.path.join(opt.data_pose_dir, f"{target_name}.mat")
+            pose = read_pose_ori(mat_target, flip=False)
+        elif opt.config.find('CATS') >= 0:   # CATS
+            mat_target = os.path.join(opt.data_pose_dir, f"{target_name}_pose.npy")
+            pose = read_pose_npy(mat_target, flip=False)
+        else:
+            raise
 
         if opt.trajectory == 'still_pose':
             num_frames = 1
             extract_shape = True
         else:
             num_frames = 100
-        ## set freqs & phases or z
-        if opt.opt_param == "freq_phase":
-            freq, phase = read_latents_txt_fq(invert_file_target, device=device)
-            freqs = get_trajectory(opt.freq_trajectory, num_frames, freq)
-            phases = get_trajectory(opt.phase_trajectory, num_frames, phase)
-        elif opt.opt_param == "z":
-            z = read_latents_txt_z(invert_file_target, device=device)
-            zs = get_trajectory(opt.z_trajectory, num_frames, z)
+        ## set latent code z
+        z = read_latents_txt_z(optimized_latent, device=device)
+        zs = get_trajectory(opt.z_trajectory, num_frames, z)
 
         ## set trajectory
         if opt.trajectory == 'still_front':
@@ -444,8 +328,7 @@ if __name__ == '__main__':
             for t in np.linspace(0, 1, num_frames):
                 pitch = math.pi / 4
                 yaw = t * 2 * math.pi
-                fov = config['camera']['fov']
-                # fov = curriculum['fov']
+                fov = curriculum['fov']
 
                 trajectory.append((pitch, yaw, fov))
 
@@ -468,36 +351,18 @@ if __name__ == '__main__':
             for frame_idx in range(num_frames):
                 pitch, yaw, fov = trajectory[frame_idx]
 
-                # import ipdb; ipdb.set_trace()
                 generator.h_mean = yaw
                 generator.v_mean = pitch
                 generator.h_stddev = generator.v_stddev = 0
 
                 # generate img
-                # import ipdb; ipdb.set_trace()
-                if opt.opt_param == "freq_phase":
-                    freq = freqs[frame_idx]
-                    phase = phases[frame_idx]
-                    tensor_img = generator.forward_with_frequencies_phase_shifts(freq, phase, **config['camera'])[0]
+                z = zs[frame_idx]
+                tensor_img = generator(z, **config['camera'], truncation_psi=opt.psi)[0]
 
-                    if extract_shape:
-                        voxel_grid, voxel_origin, voxel_size = sample_generator_with_freq_phase(
-                            generator, freq, phase, cube_length=opt.cube_size, voxel_resolution=opt.voxel_resolution)
+                if extract_shape:
+                    voxel_grid, voxel_origin, voxel_size = sample_generator(
+                        generator, z, cube_length=opt.cube_size, voxel_resolution=opt.voxel_resolution)
 
-                elif opt.opt_param == "z":
-                    z = zs[frame_idx]
-                    tensor_img = generator(z, **config['camera'], truncation_psi=opt.psi)[0]
-
-                    if extract_shape:
-                        voxel_grid, voxel_origin, voxel_size = sample_generator(
-                            generator, z, cube_length=opt.cube_size, voxel_resolution=opt.voxel_resolution)
-
-                # # metadata['lock_view_dependence'] = False
-                # tensor_img = staged_forward(freq, phase, z_id, z_exp, noise, generator, dif_model, bfm_model, vae_net_id,
-                #                          vae_net_exp, stage=metadata['img_size'], alpha=1, metadata=metadata, opt=opt)
-
-                # img = Image.new('L', (opt.image_size, opt.image_size), 0)
-                # bs, _, img_size, _ = tensor_img.size()
                 save_image(tensor_img, os.path.join(cnt_output_dir, f"{target_name}_{frame_idx}_.png"), normalize=True,range=(-1,1))
                 frames.append(tensor_to_PIL(tensor_img))
                 ## save shape

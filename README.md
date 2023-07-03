@@ -1,22 +1,29 @@
 # NeRFInvertor: High Fidelity NeRF-GAN Inversion for Single-shot Real Image Animation, CVPR'23
 <p align="center"> 
-<img src="/doc/teaser.mov">
+<img src="/docs/teaser.mov">
 </p>
 
-This is an official pytorch implementation of the following paper:
+This is an official pytorch implementation of our NeRFInvertor paper:
 
 Y. Yin, K. Ghasedi, H. Wu, J. Yang, X. Tong, Y. Fu, **NeRFInvertor: High Fidelity NeRF-GAN Inversion for Single-shot Real Image Animation**, IEEE Computer Vision and Pattern Recognition (CVPR), 2023.
 
 
-### [[Paper](https://openaccess.thecvf.com/content/CVPR2023/papers/Yin_NeRFInvertor_High_Fidelity_NeRF-GAN_Inversion_for_Single-Shot_Real_Image_Animation_CVPR_2023_paper.pdf)]
-[[ArXiv](https://arxiv.org/abs/2211.17235)]
-[[Project Page](https://yuyin1.github.io/NeRFInvertor_Homepage/)]### 
+### [[Paper](https://openaccess.thecvf.com/content/CVPR2023/papers/Yin_NeRFInvertor_High_Fidelity_NeRF-GAN_Inversion_for_Single-Shot_Real_Image_Animation_CVPR_2023_paper.pdf)] ### 
+### [[ArXiv](https://arxiv.org/abs/2211.17235)] ### 
+### [[Project Page](https://yuyin1.github.io/NeRFInvertor_Homepage/)] ### 
 
-Abstract: _Nerf-based Generative models have shown impressive capacity in generating high-quality images with consistent 3D geometry. Despite successful synthesis of fake identity images randomly sampled from latent space, adopting these models for generating face images of real subjects is still a challenging task due to its so-called inversion issue. In this paper, we propose a universal method to surgically fine-tune these NeRF-GAN models in order to achieve high-fidelity animation of real subjects only by a single image. Given the optimized latent code for an out-of-domain real image, we employ 2D loss functions on the rendered image to reduce the identity gap. Furthermore, our method leverages explicit and implicit 3D regularizations using the in-domain neighborhood samples around the optimized latent code to remove geometrical and visual artifacts. Our experiments confirm the effectiveness of our method in realistic, high-fidelity, and 3D consistent animation of real faces on multiple NeRF-GAN models across different datasets._
+Abstract: _Nerf-based Generative models (NeRF-GANs) have shown impressive capacity in generating high-quality images with consistent 3D geometry. In this paper, we propose a universal method to surgically fine-tune these NeRF-GANs in order to achieve high-fidelity animation of real subjects only by a single image. Given the optimized latent code for an out-of-domain real image, we employ 2D loss functions on the rendered image to reduce the identity gap. Furthermore, our method leverages explicit and implicit 3D regularizations using the in-domain neighborhood samples around the optimized latent code to remove geometrical and visual artifacts._
+
+
+## Recent Updates
+**2023.06.01:** Inversion of [GRAM](https://github.com/microsoft/GRAM/)
+**TODO:**
+- Inversion of [EG3D](https://github.com/NVlabs/eg3d)
+- Inversion of [AnifaceGAN](https://yuewuhkust.github.io/AniFaceGAN/)
 
 ## Requirements
 - Currently only Linux is supported.
-- 64-bit Python 3.6 installation or newer. We recommend using Anaconda3.
+- 64-bit Python 3.8 installation or newer. We recommend using Anaconda3.
 - One or more high-end NVIDIA GPUs, NVIDIA drivers, and CUDA toolkit 10.1 or newer. We recommend using Tesla V100 GPUs with 32 GB memory for training to reproduce the results in the paper. 
 
 ## Installation
@@ -29,21 +36,75 @@ source activate nerfinvertor
 ```
 
 ## Pre-trained models
-Checkpoints for pre-trained models used in our paper (default settings) are as follows.
+We provide various auxiliary models needed for NeRF-GAN inversion task. This includes the NeRF-based generators and pre-trained models used for loss computation.
+# Pretrained NeRF-GANs
 |Model|Dataset|Resolution|Download|
-|:----:|:-----------:|:-----------:|:-----------:|
-|      | FFHQ  | 256x256 | [Github link](https://github.com/microsoft/GRAM/tree/main/pretrained_models/FFHQ_default) |
-| GRAM | Cats  | 256x256 | [Github link](https://github.com/microsoft/GRAM/tree/main/pretrained_models/CATS_default) |
-|      | CARLA | 128x128 | [Github link](https://github.com/microsoft/GRAM/tree/main/pretrained_models/CARLA_default)|
+|:----:|:----:|:-------:|:-----------:|
+| GRAM | FFHQ | 256x256 | [Github link](https://github.com/microsoft/GRAM/tree/main/pretrained_models/FFHQ_default) |
+| GRAM | Cats | 256x256 | [Github link](https://github.com/microsoft/GRAM/tree/main/pretrained_models/CATS_default) |
+| EG3D | FFHQ | 256x256 | [Github link](https://github.com/NVlabs/eg3d/blob/main/docs/models.md) |
+| AnifaceGAN | FFHQ | 512x512 | [Github link](https://yuewuhkust.github.io/AniFaceGAN/) |
+<!-- |      | CARLA| 128x128 | [Github link](https://github.com/microsoft/GRAM/tree/main/pretrained_models/CARLA_default)| -->
 
-## Run Inversion
-	sh inversion.sh <CUDA=0> 'z' 'all' 'celebahq' 1000
+## Prepare Dataset
 
-## Finetune the NeRFGANs
-	sh finetune.sh finetune_noise3dlossWMasks celebahq
-	
-## Rendering results for finetuned models
-	sh render_finetuned_imgs.sh 2 'finetune_Z_rec' 'False' 'noise3dloss' 'celebahq'
+## Inversion
+# Optimize latent codes
+In order to invert a real image and edit it you should first align and crop it to the correct size. 
+Use --name=image_name.png to invert a specific image, otherwise, the following commond will invert all images in img_dir 
+```
+python optimization.py \
+    --generator_file='pretrained_models/gram/FFHQ_default/generator.pth' \
+    --output_dir='experiments/gram/optimization' \
+    --data_img_dir='samples/faces/' \
+    --data_pose_dir='samples/faces/camerapose/' \
+    --config='FACES_default' \
+    --max_iter=1000
+```
+
+# Finetune NeRFGANs
+```
+CUDA_VISIBLE_DEVICES=0,1 python finetune.py \
+    --target_names='000656.png+000990.png' \
+    --config='FACES_finetune' \
+    --output_dir='experiments/gram/finetuned_model/' \
+    --data_img_dir='samples/faces/' \
+    --data_pose_dir='samples/faces/camerapose/'  \
+    --data_emd_dir='experiments/gram/optimization/' \
+    --pretrain_model='pretrained_models/gram/FFHQ_default/generator.pth' \
+    --load_mask \
+    --regulizer_alpha=5 \
+    --lambda_id=0.1 \
+    --lambda_reg_rgbBefAggregation 10 \
+    --lambda_bg_sigma 10 \
+    --experiment_name=finetune_noise3dlossWMasks
+```
+
+## Inference
+# Rendering results for finetuned models
+```
+CUDA_VISIBLE_DEVICES=0 python rendering_using_finetuned_model.py \
+    --generator_file='experiments/gram/finetuned_model/097665/generator.pth' \
+    --target_name='097665' \
+    --output_dir='experiments/gram/rendering_results/' \
+    --data_img_dir='samples/faces/' \
+    --data_pose_dir='samples/faces/camerapose/'  \
+    --data_emd_dir='experiments/gram/optimization/' \
+    --config='FACES_finetune' \
+    --image_size 256 \
+    --gen_video
+```
+<!-- Rendering results for Cats -->
+<!-- CUDA_VISIBLE_DEVICES=0 python rendering_using_finetuned_model.py \
+    --generator_file='experiments/gram/finetuned_model/00000005_001/generator.pth' \
+    --target_name='00000005_001' \
+    --output_dir='experiments/gram/rendering_results/' \
+    --data_img_dir='samples/cats/' \
+    --data_pose_dir='samples/cats/camerapose/'  \
+    --data_emd_dir='experiments/gram/optimization/' \
+    --config='CATS_finetune' \
+    --image_size 256 \
+    --gen_video -->
 
 
 ## Citation
