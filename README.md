@@ -4,7 +4,9 @@
 </p> -->
 <!-- blank line -->
 <figure class="video_container">
-  <iframe src="/docs/teaser.mov" frameborder="0" allowfullscreen="true"> </iframe>
+  <video controls="true" allowfullscreen="true" >
+    <source src="/docs/teaser.mov" type="video/mov">
+  </video>
 </figure>
 <!-- blank line -->
 
@@ -39,9 +41,9 @@ conda env create -f environment.yml
 source activate nerfinvertor
 ```
 
-## Pre-trained models
+## Preparation
 We provide various auxiliary models needed for NeRF-GAN inversion task. This includes the NeRF-based generators and pre-trained models used for loss computation.
-# Pretrained NeRF-GANs
+### Pretrained NeRF-GANs
 |Model|Dataset|Resolution|Download|
 |:----:|:----:|:-------:|:-----------:|
 | GRAM | FFHQ | 256x256 | [Github link](https://github.com/microsoft/GRAM/tree/main/pretrained_models/FFHQ_default) |
@@ -50,7 +52,7 @@ We provide various auxiliary models needed for NeRF-GAN inversion task. This inc
 | AnifaceGAN | FFHQ | 512x512 | [Github link](https://yuewuhkust.github.io/AniFaceGAN/) |
 <!-- |      | CARLA| 128x128 | [Github link](https://github.com/microsoft/GRAM/tree/main/pretrained_models/CARLA_default)| -->
 
-## Prepare Dataset
+### Prepare Dataset
 - Sample dataset: We provide some sample image.
 ```
 NeRFInvertor/
@@ -93,7 +95,7 @@ NeRFInvertor/
 
 
 ## Inversion
-# Optimize latent codes
+### Optimize latent codes
 In order to invert a real image and edit it you should first align and crop it to the correct size. 
 Use --name=image_name.png to invert a specific image, otherwise, the following commond will invert all images in img_dir 
 ```
@@ -106,7 +108,7 @@ python optimization.py \
     --max_iter=1000
 ```
 
-# Finetune NeRFGANs
+### Finetune NeRFGANs
 ```
 CUDA_VISIBLE_DEVICES=0,1 python finetune.py \
     --target_names='R1.png+R2.png' \
@@ -124,7 +126,7 @@ CUDA_VISIBLE_DEVICES=0,1 python finetune.py \
 ```
 
 ## Inference
-# Rendering results for finetuned models
+### Rendering results for finetuned models
 ```
 CUDA_VISIBLE_DEVICES=0 python rendering_using_finetuned_model.py \
     --generator_file='experiments/gram/finetuned_model/000990/generator.pth' \
@@ -150,6 +152,12 @@ CUDA_VISIBLE_DEVICES=0 python rendering_using_finetuned_model.py \
     --gen_video -->
 
 
+## Acknowledgements
+This repository structure is based on [GRAM](https://github.com/microsoft/GRAM/) and [PTI](https://github.com/danielroich/PTI) repositories. We thank the authors for their excellent work. 
+
+## Contact
+If you have any questions, please contact Yu Yin (yin.yu1@northeastern.edu).
+
 ## Citation
 	@inproceedings{yin2023nerfinvertor,
 	  title={NeRFInvertor: High Fidelity NeRF-GAN Inversion for Single-shot Real Image Animation},
@@ -158,3 +166,4 @@ CUDA_VISIBLE_DEVICES=0 python rendering_using_finetuned_model.py \
 	  pages={8539--8548},
 	  year={2023}
 	}
+
