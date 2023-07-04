@@ -3,11 +3,14 @@
 <img src="/docs/teaser.mov">
 </p> -->
 <!-- blank line -->
-<figure class="video_container">
+<!-- <figure class="video_container">
   <video controls="true" allowfullscreen="true" >
     <source src="/docs/teaser.mov" type="video/mov">
   </video>
-</figure>
+</figure> -->
+<video width="640" height="480" controls>
+  <source src="/docs/teaser.mov" type="video/quicktime">
+</video>
 <!-- blank line -->
 
 This is an official pytorch implementation of our NeRFInvertor paper:
@@ -50,10 +53,11 @@ We provide various auxiliary models needed for NeRF-GAN inversion task. This inc
 | GRAM | Cats | 256x256 | [Github link](https://github.com/microsoft/GRAM/tree/main/pretrained_models/CATS_default) |
 | EG3D | FFHQ | 256x256 | [Github link](https://github.com/NVlabs/eg3d/blob/main/docs/models.md) |
 | AnifaceGAN | FFHQ | 512x512 | [Github link](https://yuewuhkust.github.io/AniFaceGAN/) |
-<!-- |      | CARLA| 128x128 | [Github link](https://github.com/microsoft/GRAM/tree/main/pretrained_models/CARLA_default)| -->
+| arcface |:----:|:----:| [Github link](https://drive.google.com/file/d/1AT1JDWf3UrrfDhvYD_4R4Ll2oMhSgo-s/view?usp=sharing) |
+All models can be downloaded at [Github link](https://drive.google.com/drive/folders/1ASujpzRmMi1aZGWCTHsB7LdYim88JxAs?usp=sharing).
 
 ### Prepare Dataset
-- Sample dataset: We provide some sample image.
+- Sample dataset: We provide some [sample images](https://github.com/YuYin1/NeRFInvertor/tree/main/samples).
 ```
 NeRFInvertor/
 │
@@ -93,6 +97,8 @@ NeRFInvertor/
 	└─── celebahq/
 ```
 
+### Pretrained NeRFInvertor for sample images
+We provide [pretrained NeRFInvertor](https://drive.google.com/drive/folders/19dPugK4B56OyS9WXJ_PkHfjuY0v02Vcf?usp=sharing) (i.e., fine-tuned models) for each [sample image](https://github.com/YuYin1/NeRFInvertor/tree/main/samples)
 
 ## Inversion
 ### Optimize latent codes
