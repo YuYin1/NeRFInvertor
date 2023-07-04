@@ -1,16 +1,16 @@
 # NeRFInvertor: High Fidelity NeRF-GAN Inversion for Single-shot Real Image Animation, CVPR'23
-<!-- <p align="center"> 
-<img src="/docs/teaser.mov">
-</p> -->
+<p align="center"> 
+<img src="/docs/teaser.gif">
+</p>
 <!-- blank line -->
 <!-- <figure class="video_container">
   <video controls="true" allowfullscreen="true" >
     <source src="/docs/teaser.mov" type="video/mov">
   </video>
 </figure> -->
-<video width="640" height="480" controls>
+<!-- <video width="640" height="480" controls>
   <source src="/docs/teaser.mov" type="video/quicktime">
-</video>
+</video> -->
 <!-- blank line -->
 
 This is an official pytorch implementation of our NeRFInvertor paper:
@@ -53,7 +53,8 @@ We provide various auxiliary models needed for NeRF-GAN inversion task. This inc
 | GRAM | Cats | 256x256 | [Github link](https://github.com/microsoft/GRAM/tree/main/pretrained_models/CATS_default) |
 | EG3D | FFHQ | 256x256 | [Github link](https://github.com/NVlabs/eg3d/blob/main/docs/models.md) |
 | AnifaceGAN | FFHQ | 512x512 | [Github link](https://yuewuhkust.github.io/AniFaceGAN/) |
-| arcface |:----:|:----:| [Github link](https://drive.google.com/file/d/1AT1JDWf3UrrfDhvYD_4R4Ll2oMhSgo-s/view?usp=sharing) |
+| arcface |--|--| [Github link](https://drive.google.com/file/d/1AT1JDWf3UrrfDhvYD_4R4Ll2oMhSgo-s/view?usp=sharing) |
+
 All models can be downloaded at [Github link](https://drive.google.com/drive/folders/1ASujpzRmMi1aZGWCTHsB7LdYim88JxAs?usp=sharing).
 
 ### Prepare Dataset
@@ -68,16 +69,16 @@ NeRFInvertor/
 		└─── *.png   # original 256x256 images
 		|
 		└─── camerapose/  # estimated face poses
-		    |
-		    └─── *.mat   
-	    │
-	    └─── mask256/   # mask of faces
-		    |
-		    └─── *.png
+			|
+			└─── *.mat   
+		│
+		└─── mask256/   # mask of faces
+			|
+			└─── *.png
 ```
 <!-- - FFHQ or CelebA-HQ: Download the [original 1024x1024 images](https://github.com/NVlabs/ffhq-dataset). We additionally provide [masks (google drive)](https://drive.google.com/file/d/1bOefjWzNGzjJ65J5WT9V0QrsrNhKjjCb/view?usp=sharing) for image preprocessing and [face poses (google drive)](https://drive.google.com/file/d/1kb-PeNhOEmN1Gs8e0xF3aLjsjHe01sVb/view?usp=sharing) estimated by [Deep3DFaceRecon](https://github.com/sicxu/Deep3DFaceRecon_pytorch) for training. Download all files and organize them as follows: -->
 - FFHQ or CelebA-HQ: Download the [original 1024x1024 images](https://github.com/NVlabs/ffhq-dataset). We additionally provide [masks (google drive)] and [face poses (google drive)] estimated by [Deep3DFaceRecon](https://github.com/sicxu/Deep3DFaceRecon_pytorch) for training. Download all files and organize them as follows:
-```
+<!-- ```
 NeRFInvertor/
 │
 └─── datasets/
@@ -87,18 +88,19 @@ NeRFInvertor/
 		└─── *.png   # original 256x256 images
 		|
 		└─── camerapose/  # estimated face poses
-		    |
-		    └─── *.mat   
-	    │
-	    └─── mask256/   # mask of faces
-		    |
-		    └─── *.png
+			|
+			└─── *.mat   
+		│
+		└─── mask256/   # mask of faces
+			|
+			└─── *.png
 	│
 	└─── celebahq/
-```
+``` -->
 
 ### Pretrained NeRFInvertor for sample images
-We provide [pretrained NeRFInvertor](https://drive.google.com/drive/folders/19dPugK4B56OyS9WXJ_PkHfjuY0v02Vcf?usp=sharing) (i.e., fine-tuned models) for each [sample image](https://github.com/YuYin1/NeRFInvertor/tree/main/samples)
+We provide [pretrained NeRFInvertor](https://drive.google.com/drive/folders/19dPugK4B56OyS9WXJ_PkHfjuY0v02Vcf?usp=sharing) (i.e., fine-tuned models) for each [samples](https://github.com/YuYin1/NeRFInvertor/tree/main/samples). The folder includes optimized latent codes, fine-tuned models, and inference results (i.e., rendering outputs).
+
 
 ## Inversion
 ### Optimize latent codes
