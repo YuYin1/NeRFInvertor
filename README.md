@@ -1,30 +1,6 @@
 # NeRFInvertor: High Fidelity NeRF-GAN Inversion for Single-shot Real Image Animation, CVPR'23
 
-[![Alt Text](/samples/teaser.png)](https://youtu.be/Cfgp62rNiRI)
-
-
-
 https://github.com/YuYin1/NeRFInvertor/assets/24871206/00e94eeb-efc5-4a61-8570-f2784c741685
-
-
-
-https://github.com/YuYin1/NeRFInvertor/blob/main/samples/teaser.mov
-
-Earth Heightmap node:
-
-https://user-images.githubusercontent.com/6877923/123006036-64e2e780-d3b7-11eb-922e-018994b32da5.mov
-
-<!-- blank line -->
-
-<!-- <figure class="video_container">
-  <video controls="true" allowfullscreen="true" >
-    <source src="https://youtu.be/Cfgp62rNiRI" type="video/mov">
-  </video>
-</figure> -->
-<!-- <video width="640" height="480" controls>
-  <source src="/docs/teaser.mov" type="video/quicktime">
-</video> -->
-<!-- blank line -->
 
 This is an official pytorch implementation of our NeRFInvertor paper:
 
