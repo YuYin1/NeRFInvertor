@@ -1,6 +1,6 @@
 # NeRFInvertor: High Fidelity NeRF-GAN Inversion for Single-shot Real Image Animation, CVPR'23
 
-[![Alt Text](https://example.com/thumbnail.jpg)](https://youtu.be/Cfgp62rNiRI)
+[![Alt Text](/samples/teaser.png)](https://youtu.be/Cfgp62rNiRI)
 
 <!-- blank line -->
 
