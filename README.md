@@ -44,7 +44,7 @@ We provide various auxiliary models needed for NeRF-GAN inversion task. This inc
 | AnifaceGAN | FFHQ | 512x512 | [Github link](https://yuewuhkust.github.io/AniFaceGAN/) |
 | arcface |--|--| [Github link](https://drive.google.com/file/d/1AT1JDWf3UrrfDhvYD_4R4Ll2oMhSgo-s/view?usp=sharing) |
 
-All models can be downloaded at [Github link](https://drive.google.com/drive/folders/1ASujpzRmMi1aZGWCTHsB7LdYim88JxAs?usp=sharing).
+Models are summarized at [Github link](https://drive.google.com/drive/folders/1ASujpzRmMi1aZGWCTHsB7LdYim88JxAs?usp=sharing).
 
 ### Prepare Dataset
 - Sample dataset: We provide some [sample images](https://github.com/YuYin1/NeRFInvertor/tree/main/samples).
