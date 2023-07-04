@@ -1,14 +1,19 @@
 # NeRFInvertor: High Fidelity NeRF-GAN Inversion for Single-shot Real Image Animation, CVPR'23
-<p align="center"> 
+<!-- <p align="center"> 
 <img src="/docs/teaser.mov">
-</p>
+</p> -->
+<!-- blank line -->
+<figure class="video_container">
+  <iframe src="/docs/teaser.mov" frameborder="0" allowfullscreen="true"> </iframe>
+</figure>
+<!-- blank line -->
 
 This is an official pytorch implementation of our NeRFInvertor paper:
 
 Y. Yin, K. Ghasedi, H. Wu, J. Yang, X. Tong, Y. Fu, **NeRFInvertor: High Fidelity NeRF-GAN Inversion for Single-shot Real Image Animation**, IEEE Computer Vision and Pattern Recognition (CVPR), 2023.
 
 
-###[[Paper](https://openaccess.thecvf.com/content/CVPR2023/papers/Yin_NeRFInvertor_High_Fidelity_NeRF-GAN_Inversion_for_Single-Shot_Real_Image_Animation_CVPR_2023_paper.pdf)] [[ArXiv](https://arxiv.org/abs/2211.17235)] [[Project Page](https://yuyin1.github.io/NeRFInvertor_Homepage/)] ### 
+### [[Paper](https://openaccess.thecvf.com/content/CVPR2023/papers/Yin_NeRFInvertor_High_Fidelity_NeRF-GAN_Inversion_for_Single-Shot_Real_Image_Animation_CVPR_2023_paper.pdf)] [[ArXiv](https://arxiv.org/abs/2211.17235)] [[Project Page](https://yuyin1.github.io/NeRFInvertor_Homepage/)] 
 
 Abstract: _Nerf-based Generative models (NeRF-GANs) have shown impressive capacity in generating high-quality images with consistent 3D geometry. In this paper, we propose a universal method to surgically fine-tune these NeRF-GANs in order to achieve high-fidelity animation of real subjects only by a single image. Given the optimized latent code for an out-of-domain real image, we employ 2D loss functions on the rendered image to reduce the identity gap. Furthermore, our method leverages explicit and implicit 3D regularizations using the in-domain neighborhood samples around the optimized latent code to remove geometrical and visual artifacts._
 
@@ -46,37 +51,46 @@ We provide various auxiliary models needed for NeRF-GAN inversion task. This inc
 <!-- |      | CARLA| 128x128 | [Github link](https://github.com/microsoft/GRAM/tree/main/pretrained_models/CARLA_default)| -->
 
 ## Prepare Dataset
-- Sample dataset
-- FFHQ: Download the [original 1024x1024 images](https://github.com/NVlabs/ffhq-dataset). We additionally provide [detected 5 facial landmarks (google drive)](https://drive.google.com/file/d/1bOefjWzNGzjJ65J5WT9V0QrsrNhKjjCb/view?usp=sharing) for image preprocessing and [face poses (google drive)](https://drive.google.com/file/d/1kb-PeNhOEmN1Gs8e0xF3aLjsjHe01sVb/view?usp=sharing) estimated by [Deep3DFaceRecon](https://github.com/sicxu/Deep3DFaceRecon_pytorch) for training. Download all files and organize them as follows:
+- Sample dataset: We provide some sample image.
 ```
-GRAM/
+NeRFInvertor/
 │
-└─── raw_data/
-    |
-    └─── ffhq/
+└─── samples/
 	│
-	└─── *.png   # original 1024x1024 images
-	│
-        └─── lm5p/   # detected 5 facial landmarks
-	|   |
-        |   └─── *.txt
-	|
-	└─── poses/  # estimated face poses
-	    |
-	    └─── *.mat    
+	└─── faces/
+		│
+		└─── *.png   # original 256x256 images
+		|
+		└─── camerapose/  # estimated face poses
+		    |
+		    └─── *.mat   
+	    │
+	    └─── mask256/   # mask of faces
+		    |
+		    └─── *.png
 ```
-- Cats: Download the original cat images and provided landmarks using this [link](https://archive.org/details/CAT_DATASET) and organize all files as follows:
+<!-- - FFHQ or CelebA-HQ: Download the [original 1024x1024 images](https://github.com/NVlabs/ffhq-dataset). We additionally provide [masks (google drive)](https://drive.google.com/file/d/1bOefjWzNGzjJ65J5WT9V0QrsrNhKjjCb/view?usp=sharing) for image preprocessing and [face poses (google drive)](https://drive.google.com/file/d/1kb-PeNhOEmN1Gs8e0xF3aLjsjHe01sVb/view?usp=sharing) estimated by [Deep3DFaceRecon](https://github.com/sicxu/Deep3DFaceRecon_pytorch) for training. Download all files and organize them as follows: -->
+- FFHQ or CelebA-HQ: Download the [original 1024x1024 images](https://github.com/NVlabs/ffhq-dataset). We additionally provide [masks (google drive)] and [face poses (google drive)] estimated by [Deep3DFaceRecon](https://github.com/sicxu/Deep3DFaceRecon_pytorch) for training. Download all files and organize them as follows:
 ```
-GRAM/
+NeRFInvertor/
 │
-└─── raw_data/
-    |
-    └─── cats/
+└─── datasets/
 	│
-	└─── *.jpg   # original images
+	└─── ffhq/
+		│
+		└─── *.png   # original 256x256 images
+		|
+		└─── camerapose/  # estimated face poses
+		    |
+		    └─── *.mat   
+	    │
+	    └─── mask256/   # mask of faces
+		    |
+		    └─── *.png
 	│
-        └─── *.jpg.cat   # provided landmarks
+	└─── celebahq/
 ```
+
 
 ## Inversion
 # Optimize latent codes
