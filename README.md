@@ -1,11 +1,12 @@
 # NeRFInvertor: High Fidelity NeRF-GAN Inversion for Single-shot Real Image Animation, CVPR'23
-<p align="center"> 
-<img src="/docs/teaser.gif">
-</p>
+
+[![Alt Text](https://example.com/thumbnail.jpg)](https://youtu.be/Cfgp62rNiRI)
+
 <!-- blank line -->
+
 <!-- <figure class="video_container">
   <video controls="true" allowfullscreen="true" >
-    <source src="/docs/teaser.mov" type="video/mov">
+    <source src="https://youtu.be/Cfgp62rNiRI" type="video/mov">
   </video>
 </figure> -->
 <!-- <video width="640" height="480" controls>
