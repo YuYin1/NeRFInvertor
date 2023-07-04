@@ -2,6 +2,12 @@
 
 [![Alt Text](/samples/teaser.png)](https://youtu.be/Cfgp62rNiRI)
 
+
+
+https://github.com/YuYin1/NeRFInvertor/assets/24871206/00e94eeb-efc5-4a61-8570-f2784c741685
+
+
+
 https://github.com/YuYin1/NeRFInvertor/blob/main/samples/teaser.mov
 
 Earth Heightmap node:
