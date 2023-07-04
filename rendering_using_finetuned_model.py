@@ -1,5 +1,4 @@
 import os
-import ipdb
 from matplotlib.pyplot import prism
 import numpy as np
 import math

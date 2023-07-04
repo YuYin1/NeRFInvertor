@@ -2,9 +2,7 @@ import os
 import glob, shutil
 import torch
 
-from torch_fidelity import calculate_metrics
 from torchvision.utils import save_image
-from pytorch_fid import fid_score
 from tqdm import tqdm
 import copy
 import argparse
@@ -139,7 +137,6 @@ if __name__ == '__main__':
     parser.add_argument('--config', type=str, default='FACES_default')
     parser.add_argument('--ema', action='store_true')
     parser.add_argument('--max_batch_size', type=int, default=None)
-    parser.add_argument('--num_images', type=int, default=-1, help="the number of inverted images or -1 (all images)")
     parser.add_argument('--suffix', default='', type=str, help='customized suffix: opt.name = opt.name + suffix: e.g., {model}_{netG}_size{load_size}')
     parser.add_argument('--psi', type=str, default=0.7)
     parser.add_argument('--lambda_perceptual', type=float, default=1)
@@ -171,16 +168,15 @@ if __name__ == '__main__':
         img_fullpaths_all.append(img_fullpath)
     else:
         img_fullpaths_all = sorted(glob.glob(os.path.join(opt.data_img_dir, f"*.png")))
-        img_fullpaths_all = img_fullpaths_all[:opt.num_images]
     img_fullpaths = []
     for imgpath in img_fullpaths_all:
         subject = imgpath.split('/')[-1].split('.')[0]
         inv_path = os.path.join(opt.output_dir, subject, f"{(opt.max_iter-1):05d}_.txt")
         if not os.path.exists(inv_path):
             img_fullpaths.append(imgpath)
+            print
         else:
             print(f"Ignoring {subject}...")
-
 
     ## start optimization
     for img_fullpath in img_fullpaths:

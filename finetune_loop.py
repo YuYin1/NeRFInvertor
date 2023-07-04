@@ -37,7 +37,7 @@ from tqdm import tqdm
 from datetime import datetime
 import copy
 from torch_ema import ExponentialMovingAverage
-import pytorch3d
+# import pytorch3d
 # from loss import *
 from torch.utils.tensorboard import SummaryWriter
 import pickle, PIL
