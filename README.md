@@ -57,7 +57,7 @@ NeRFInvertor/
 		│
 		└─── *.png   # original 256x256 images
 		|
-		└─── camerapose/  # estimated face poses
+		└─── poses/  # estimated face poses
 			|
 			└─── *.mat   
 		│
@@ -65,27 +65,25 @@ NeRFInvertor/
 			|
 			└─── *.png
 ```
-<!-- - FFHQ or CelebA-HQ: Download the [original 1024x1024 images](https://github.com/NVlabs/ffhq-dataset). We additionally provide [masks (google drive)](https://drive.google.com/file/d/1bOefjWzNGzjJ65J5WT9V0QrsrNhKjjCb/view?usp=sharing) for image preprocessing and [face poses (google drive)](https://drive.google.com/file/d/1kb-PeNhOEmN1Gs8e0xF3aLjsjHe01sVb/view?usp=sharing) estimated by [Deep3DFaceRecon](https://github.com/sicxu/Deep3DFaceRecon_pytorch) for training. Download all files and organize them as follows: -->
-- FFHQ or CelebA-HQ: Download the [original 1024x1024 images](https://github.com/NVlabs/ffhq-dataset). We additionally provide [masks (google drive)] and [face poses (google drive)] estimated by [Deep3DFaceRecon](https://github.com/sicxu/Deep3DFaceRecon_pytorch) for training. Download all files and organize them as follows:
-<!-- ```
-NeRFInvertor/
+- FFHQ or CelebA-HQ: We additionally provide [FFHQ (google drive)](https://drive.google.com/file/d/1AZ10izDp4A5f3UyGeR-joYn7IcTRR1yB/view?usp=sharing)  and [CelebA-HQ (google drive)](https://drive.google.com/file/d/1AYNkNWST1vzcph-4yBjTOKFVQUh4fyh1/view?usp=sharing) datasets for training and evaluation. The dataset includes face images, masks, and face poses. Noted that the face poses is estimated by [Deep3DFaceRecon](https://github.com/sicxu/Deep3DFaceRecon_pytorch). The datasets have the following structure:
+```
+datasets/
 │
-└─── datasets/
+└─── ffhq/
 	│
-	└─── ffhq/
-		│
-		└─── *.png   # original 256x256 images
+	└─── *.png   # original 256x256 images
+	|
+	└─── poses/  # estimated face poses
 		|
-		└─── camerapose/  # estimated face poses
-			|
-			└─── *.mat   
-		│
-		└─── mask256/   # mask of faces
-			|
-			└─── *.png
+		└─── *.mat   
 	│
-	└─── celebahq/
-``` -->
+	└─── mask256/   # mask of faces
+		|
+		└─── *.png
+│
+└─── celebahq/
+    ...
+```
 
 ### Pretrained NeRFInvertor for sample images
 We provide [pretrained NeRFInvertor](https://drive.google.com/drive/folders/19dPugK4B56OyS9WXJ_PkHfjuY0v02Vcf?usp=sharing) (i.e., fine-tuned models) for each [samples](https://github.com/YuYin1/NeRFInvertor/tree/main/samples). The folder includes optimized latent codes, fine-tuned models, and inference results (i.e., rendering outputs).
@@ -100,7 +98,7 @@ python optimization.py \
     --generator_file='pretrained_models/gram/FFHQ_default/generator.pth' \
     --output_dir='experiments/gram/optimization' \
     --data_img_dir='samples/faces/' \
-    --data_pose_dir='samples/faces/camerapose/' \
+    --data_pose_dir='samples/faces/poses/' \
     --config='FACES_default' \
     --max_iter=1000
 ```
@@ -112,7 +110,7 @@ CUDA_VISIBLE_DEVICES=0,1 python finetune.py \
     --config='FACES_finetune' \
     --output_dir='experiments/gram/finetuned_model/' \
     --data_img_dir='samples/faces/' \
-    --data_pose_dir='samples/faces/camerapose/'  \
+    --data_pose_dir='samples/faces/poses/'  \
     --data_emd_dir='experiments/gram/optimization/' \
     --pretrain_model='pretrained_models/gram/FFHQ_default/generator.pth' \
     --load_mask \
@@ -130,7 +128,7 @@ CUDA_VISIBLE_DEVICES=0 python rendering_using_finetuned_model.py \
     --target_name='000990' \
     --output_dir='experiments/gram/rendering_results/' \
     --data_img_dir='samples/faces/' \
-    --data_pose_dir='samples/faces/camerapose/'  \
+    --data_pose_dir='samples/faces/poses/'  \
     --data_emd_dir='experiments/gram/optimization/' \
     --config='FACES_finetune' \
     --image_size 256 \
@@ -142,7 +140,7 @@ CUDA_VISIBLE_DEVICES=0 python rendering_using_finetuned_model.py \
     --target_name='00000005_001' \
     --output_dir='experiments/gram/rendering_results/' \
     --data_img_dir='samples/cats/' \
-    --data_pose_dir='samples/cats/camerapose/'  \
+    --data_pose_dir='samples/cats/poses/'  \
     --data_emd_dir='experiments/gram/optimization/' \
     --config='CATS_finetune' \
     --image_size 256 \

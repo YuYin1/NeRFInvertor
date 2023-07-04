@@ -132,7 +132,7 @@ if __name__ == '__main__':
     parser.add_argument('--generator_file', type=str, default='pretrained_models/gram/FACES_default/generator.pth')
     parser.add_argument('--output_dir', type=str, default='experiments/gram/inversion')
     parser.add_argument('--data_img_dir', type=str, default='samples/faces/')
-    parser.add_argument('--data_pose_dir', type=str, default='samples/faces/camerapose/')
+    parser.add_argument('--data_pose_dir', type=str, default='samples/faces/poses/')
     parser.add_argument('--name', type=str, default=None, help="specifc image name (e.g. '28606.png'), or None (will invert all images)")
     parser.add_argument('--config', type=str, default='FACES_default')
     parser.add_argument('--ema', action='store_true')

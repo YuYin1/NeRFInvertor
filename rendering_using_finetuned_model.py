@@ -231,7 +231,7 @@ if __name__ == '__main__':
     parser.add_argument('--target_name', type=str, default=None)
     parser.add_argument('--output_dir', type=str, default='experiments/gram/rendering_results/')
     parser.add_argument('--data_img_dir', type=str, default='samples/faces/')
-    parser.add_argument('--data_pose_dir', type=str, default='samples/faces/camerapose/')
+    parser.add_argument('--data_pose_dir', type=str, default='samples/faces/poses/')
     parser.add_argument('--data_emd_dir', type=str, default='experiments/gram/inversion')
     parser.add_argument('--config', type=str, default='FACES_default')
     parser.add_argument('--max_batch_size', type=int, default=1200000)

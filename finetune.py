@@ -57,7 +57,7 @@ if __name__ == '__main__':
     parser.add_argument('--experiment_name', type=str, default='')
     parser.add_argument('--load_dir', type=str, default='../pretrained_models')
     parser.add_argument('--data_img_dir', type=str, default='samples/faces/')
-    parser.add_argument('--data_pose_dir', type=str, default='samples/faces/camerapose/')
+    parser.add_argument('--data_pose_dir', type=str, default='samples/faces/poses/')
     parser.add_argument('--data_emd_dir', type=str, default='experiments/gram/inversion')
     parser.add_argument('--pretrain_model', type=str, default='pretrained_models/gram/FFHQ_default/generator.pth')
     parser.add_argument('--config', type=str, default='FACES_default')
