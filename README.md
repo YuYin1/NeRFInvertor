@@ -42,9 +42,9 @@ We provide various auxiliary models needed for NeRF-GAN inversion task. This inc
 | GRAM | Cats | 256x256 | [Github link](https://github.com/microsoft/GRAM/tree/main/pretrained_models/CATS_default) |
 | EG3D | FFHQ | 256x256 | [Github link](https://github.com/NVlabs/eg3d/blob/main/docs/models.md) |
 | AnifaceGAN | FFHQ | 512x512 | [Github link](https://yuewuhkust.github.io/AniFaceGAN/) |
-| arcface |--|--| [Github link](https://drive.google.com/file/d/1AT1JDWf3UrrfDhvYD_4R4Ll2oMhSgo-s/view?usp=sharing) |
+| arcface |--|--| [Github link](https://drive.google.com/file/d/16t4yUyLlecyYR810WgxVTZF9qtB7NpLo/view?usp=sharing) |
 
-Models are summarized at [Github link](https://drive.google.com/drive/folders/1ASujpzRmMi1aZGWCTHsB7LdYim88JxAs?usp=sharing).
+Models are summarized at [Github link](https://drive.google.com/drive/folders/16DM2qXGnmzY77V9XHBv_o9Ty4BU7q5Kc?usp=sharing).
 
 ### Prepare Dataset
 - Sample dataset: We provide some [sample images](https://github.com/YuYin1/NeRFInvertor/tree/main/samples).
@@ -65,7 +65,7 @@ NeRFInvertor/
 			|
 			└─── *.png
 ```
-- FFHQ or CelebA-HQ: We additionally provide [FFHQ (google drive)](https://drive.google.com/file/d/1AZ10izDp4A5f3UyGeR-joYn7IcTRR1yB/view?usp=sharing)  and [CelebA-HQ (google drive)](https://drive.google.com/file/d/1AYNkNWST1vzcph-4yBjTOKFVQUh4fyh1/view?usp=sharing) datasets for training and evaluation. The dataset includes face images, masks, and face poses. Noted that the face poses is estimated by [Deep3DFaceRecon](https://github.com/sicxu/Deep3DFaceRecon_pytorch). The datasets have the following structure:
+- FFHQ or CelebA-HQ: We additionally provide [FFHQ (google drive)](https://drive.google.com/file/d/16qt3imMo1gsAvWrO9T1GqNuCWjxxwxBd/view?usp=sharing)  and [CelebA-HQ (google drive)](https://drive.google.com/file/d/16ch326M_9bXQB1I_NpP5Mfb7PY-KJ9fv/view?usp=sharing) datasets for training and evaluation. The dataset includes face images, masks, and face poses. Noted that the face poses is estimated by [Deep3DFaceRecon](https://github.com/sicxu/Deep3DFaceRecon_pytorch). The datasets have the following structure:
 ```
 datasets/
 │
@@ -86,7 +86,7 @@ datasets/
 ```
 
 ### Pretrained NeRFInvertor for sample images
-We provide [pretrained NeRFInvertor](https://drive.google.com/drive/folders/19dPugK4B56OyS9WXJ_PkHfjuY0v02Vcf?usp=sharing) (i.e., fine-tuned models) for each [samples](https://github.com/YuYin1/NeRFInvertor/tree/main/samples). The folder includes optimized latent codes, fine-tuned models, and inference results (i.e., rendering outputs).
+We provide [pretrained NeRFInvertor](https://drive.google.com/drive/folders/16RntgRTD09iqWtIWewrISrOYqdhY05ja?usp=sharing) (i.e., fine-tuned models) for each [samples](https://github.com/YuYin1/NeRFInvertor/tree/main/samples). The folder includes optimized latent codes, fine-tuned models, and inference results (i.e., rendering outputs).
 
 
 ## Inversion
